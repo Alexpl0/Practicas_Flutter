@@ -5,6 +5,7 @@ import 'productosScroll.dart';
 import 'productosStack.dart';
 import 'productosSlider.dart';
 import 'package:flutter/material.dart';
+import 'productoSliderPoint.dart';
 
 // Función principal
 void main() {
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         '/productosScroll': (context) => ProductosScroll(), // Ruta para la pantalla de productos en Scroll
         '/productosStack': (context) => ProductosStack(), // Ruta para la pantalla de productos en Stack
         '/productosSlider': (context) => ProductosSlider(), // Ruta para la pantalla de productos en Slider
+        '/productosSliderPoint': (context) => Productosliderpoint(), // Ruta para la pantalla de productos en Slider con puntos
       },
     );
   }
@@ -123,7 +125,7 @@ class _login extends State<login> {
             // Cambia la ruta aquí para probar diferentes pantallas
             Navigator.pushNamed(
               context,
-              '/productosSlider', // Cambia a '/productosGrid', '/productosScroll' o '/productosStack' '/detallesproducto' para probar otras pantallas
+              '/productosSliderPoint', // Cambia a '/productosGrid', '/productosScroll' o '/productosStack' '/detallesproducto' para probar otras pantallas
               arguments: {'usuario': usuarioText},
             );
           } catch (e) {

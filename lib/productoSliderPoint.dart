@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart' hide CarouselController;
-import 'package:carousel_slider/carousel_slider.dart' as carousel_slider;
-final carousel_slider.CarouselSliderController _controller = carousel_slider.CarouselSliderController();
+import 'package:flutter/material.dart';
+import 'product.dart';
 
-
-class ProductosSlider extends StatelessWidget {
-  const ProductosSlider({super.key});
+class Productosliderpoint extends StatelessWidget {
+  const Productosliderpoint({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,20 +41,11 @@ class ProductosSlider extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: carousel_slider.CarouselSlider.builder(
+            child: ListView.builder(
               itemCount: productos.length,
-              itemBuilder: (context, index, realIndex) {
+              itemBuilder: (context, index) {
                 return ProductCard(producto: productos[index]);
               },
-              options: carousel_slider.CarouselOptions(
-                height: 400,
-                enlargeCenterPage: true,
-                autoPlay: true,
-                autoPlayInterval: Duration(seconds: 3),
-                autoPlayAnimationDuration: Duration(milliseconds: 800),
-                enableInfiniteScroll: true,
-                viewportFraction: 0.8,
-              ),
             ),
           ),
         ],
@@ -101,38 +90,37 @@ class TiendaScreen extends StatelessWidget {
           },
         ),
       ),
-      body: carousel_slider.CarouselSlider.builder(
+      body: ListView.builder(
         itemCount: productos.length,
-        itemBuilder: (context, index, realIndex) {
+        itemBuilder: (context, index) {
           return ProductCard(producto: productos[index]);
         },
-        options: carousel_slider.CarouselOptions(
-          height: 400,
-          enlargeCenterPage: true,
-          autoPlay: true,
-          autoPlayInterval: Duration(seconds: 3),
-          autoPlayAnimationDuration: Duration(milliseconds: 800),
-          enableInfiniteScroll: true,
-          viewportFraction: 0.8,
-        ),
       ),
     );
   }
 }
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   final Product producto;
 
   const ProductCard({super.key, required this.producto});
 
   @override
+  _ProductCardState createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  int _cantidad = 1;
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        // Navega a la pantalla de detalles del producto usando rutas nombradas
         Navigator.pushNamed(
           context,
           '/detallesproducto',
-          arguments: producto,
+          arguments: widget.producto,
         );
       },
       child: Container(
@@ -150,53 +138,66 @@ class ProductCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
+        child: Column(
           children: [
-            Image.network(
-              producto.imagenUrl,
-              width: 100,
-              height: 100,
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    producto.nombre,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                Image.network(
+                  widget.producto.imagenUrl,
+                  width: 100,
+                  height: 100,
+                ),
+                SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.producto.nombre,
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        '\$${widget.producto.precio.toStringAsFixed(2)}',
+                        style: TextStyle(fontSize: 16, color: Colors.green),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Cantidad: $_cantidad',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Slider(
+                        value: _cantidad.toDouble(),
+                        min: 1,
+                        max: 10,
+                        divisions: 9,
+                        label: _cantidad.toString(),
+                        onChanged: (double value) {
+                          setState(() {
+                            _cantidad = value.toInt();
+                          });
+                        },
+                      ),
+                      Text(
+                        'Total: \$${(widget.producto.precio * _cantidad).toStringAsFixed(2)}',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    '\$${producto.precio.toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 16, color: Colors.green),
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.add_shopping_cart, color: Colors.blue),
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${producto.nombre} añadido al carrito')),
-                );
-              },
+                ),
+                IconButton(
+                  icon: Icon(Icons.add_shopping_cart, color: Colors.blue),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${widget.producto.nombre} añadido al carrito')),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
   }
-}
-
-class Product {
-  final String nombre;
-  final double precio;
-  final String imagenUrl;
-
-  Product({
-    required this.nombre,
-    required this.precio,
-    required this.imagenUrl,
-  });
 }
